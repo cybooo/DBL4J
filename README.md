@@ -6,6 +6,7 @@
 
 ## Code Samples
 
+```java
     public static void main(String[] args) {
 
         DiscordBotsListAPI discordBotsListAPI = new DiscordBotsListAPI("Your API key");
@@ -22,28 +23,35 @@
         }
         
     }
+```
 
 ## Installation
 
 ## Maven
+```xml
 	<repository>
 	    <id>jitpack.io</id>
 	    <url>https://jitpack.io</url>
 	</repository>
-
+```
+```xml
 	<dependency>
 	    <groupId>com.github.cybooo</groupId>
 	    <artifactId>DBL4J</artifactId>
 	    <version>VERSION</version>
 	</dependency>
+```
 ## Gradle
+```gradle
 	allprojects {
 		repositories {
 			...
 			maven { url 'https://jitpack.io' }
 		}
 	}
-
+```
+```gradle
 	dependencies {
 	        implementation 'com.github.cybooo:DBL4J:Tag'
 	}
+```
