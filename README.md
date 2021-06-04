@@ -52,6 +52,6 @@
 ```
 ```gradle
 	dependencies {
-	        implementation 'com.github.cybooo:DBL4J:Tag'
+	        implementation 'com.github.cybooo:DBL4J:VERSION'
 	}
 ```
