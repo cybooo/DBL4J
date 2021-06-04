@@ -79,7 +79,7 @@ public class DiscordBotsListAPI {
      * @return JSONObject containing your bot information
      * @throws IOException If you reach the rate-limit, or other things.
      */
-    private JSONObject getBotInformation(String botId) throws IOException {
+    public JSONObject getBotInformation(String botId) throws IOException {
         URLConnection connection = new URL("https://api.discordbotslist.co/v1/public/bot/" + botId).openConnection();
         connection.setRequestProperty("Authorization", key);
         connection.setUseCaches(false);
