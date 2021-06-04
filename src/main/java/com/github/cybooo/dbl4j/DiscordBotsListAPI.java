@@ -70,9 +70,12 @@ public class DiscordBotsListAPI {
      * serverCount | number | null
      * shardCount | number | null
      *
+     * Success:
+     * Status Code: 200
+     * Return: { error: false, response: {Response} }
+     *
      * Error:
      * Status Code: 404
-     *
      * Return: { error: true, response: 'API key does not match a bot.' }
      *
      * @param botId ID of your Bot
@@ -81,6 +84,41 @@ public class DiscordBotsListAPI {
      */
     public JSONObject getBotInformation(String botId) throws IOException {
         URLConnection connection = new URL("https://api.discordbotslist.co/v1/public/bot/" + botId).openConnection();
+        connection.setRequestProperty("Authorization", key);
+        connection.setUseCaches(false);
+        connection.connect();
+        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
+        String jsonText = readAll(rd);
+        return new JSONObject(jsonText);
+    }
+
+    /**
+     *
+     * This allows you to get the reviews submitted about your bot.
+     *
+     * Response:
+     * id | string
+     * botId | string
+     * reviewerId | string
+     * positive | boolean
+     * review | string
+     * reply | string
+     *
+     * Success:
+     * Status Code: 200
+     * Return: { error: false, response: {Response[]} }
+     *
+     * Error:
+     * Status Code: 404
+     * Return: { error: true, response: 'API key does not match a bot.' }
+     *
+     * @param botId
+     * @return
+     * @throws IOException
+     */
+
+    public JSONObject getReviews(String botId) throws IOException {
+        URLConnection connection = new URL("https://api.discordbotslist.co/v1/public/bot/" + botId + "/reviews").openConnection();
         connection.setRequestProperty("Authorization", key);
         connection.setUseCaches(false);
         connection.connect();
