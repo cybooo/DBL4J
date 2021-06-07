@@ -1,19 +1,15 @@
 package com.github.cybooo.dbl4j;
 
-import okhttp3.*;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 
 public class DiscordBotsListAPI {
 
     private final String key;
+    private final OkHttpClient client;
 
     /**
      * Create an instance of DiscordBotsListAPI
@@ -21,6 +17,8 @@ public class DiscordBotsListAPI {
      */
     public DiscordBotsListAPI(String key) {
         this.key = key;
+        client = new OkHttpClient.Builder()
+                .build();
     }
 
     /**
@@ -34,18 +32,20 @@ public class DiscordBotsListAPI {
      * @return response
      */
     public String postStats(String botId, int serverCount, int shardCount) {
-        OkHttpClient client = new OkHttpClient();
-        JSONObject json = new JSONObject();
+        var json = new JSONObject();
         json.put("serverCount", serverCount);
         json.put("shardCount", shardCount);
-        RequestBody body = RequestBody.create(json.toString(), MediaType.get("application/json; charset=utf-8"));
-        Request request = new Request.Builder().url("https://api.discordbotslist.co/v1/public/bot/" + botId + "/stats").addHeader("Authorization", key).post(body).build();
-        try (Response response = client.newCall(request).execute()) {
-            return response.message();
+        var body = RequestBody.create(json.toString(), MediaType.get("application/json; charset=utf-8"));
+        var request = new Request.Builder()
+                .url("https://api.discordbotslist.co/v1/public/bot/" + botId + "/stats")
+                .addHeader("Authorization", key)
+                .post(body)
+                .build();
+        try (var response = client.newCall(request).execute()) {
+            return response.body().string();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     /**
@@ -80,16 +80,9 @@ public class DiscordBotsListAPI {
      *
      * @param botId ID of your Bot
      * @return JSONObject containing your bot information
-     * @throws IOException If you reach the rate-limit, or other things.
      */
-    public JSONObject getBotInformation(String botId) throws IOException {
-        URLConnection connection = new URL("https://api.discordbotslist.co/v1/public/bot/" + botId).openConnection();
-        connection.setRequestProperty("Authorization", key);
-        connection.setUseCaches(false);
-        connection.connect();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-        String jsonText = readAll(rd);
-        return new JSONObject(jsonText);
+    public JSONObject getBotInformation(String botId) {
+        return readJSON("https://api.discordbotslist.co/v1/public/bot/" + botId);
     }
 
     /**
@@ -114,26 +107,23 @@ public class DiscordBotsListAPI {
      *
      * @param botId
      * @return
-     * @throws IOException
      */
 
-    public JSONObject getReviews(String botId) throws IOException {
-        URLConnection connection = new URL("https://api.discordbotslist.co/v1/public/bot/" + botId + "/reviews").openConnection();
-        connection.setRequestProperty("Authorization", key);
-        connection.setUseCaches(false);
-        connection.connect();
-        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-        String jsonText = readAll(rd);
-        return new JSONObject(jsonText);
+    public JSONObject getReviews(String botId) {
+        return readJSON("https://api.discordbotslist.co/v1/public/bot/" + botId + "/reviews");
     }
 
-    private String readAll(Reader rd) throws IOException {
-        var sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
+    private JSONObject readJSON(String url) {
+        var request = new Request.Builder()
+                .url(url)
+                .header("Authorization", key)
+                .get()
+                .build();
+        try (var response = client.newCall(request).execute()) {
+            return new JSONObject(response.body().string());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return sb.toString();
     }
 
 }
