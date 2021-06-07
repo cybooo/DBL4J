@@ -23,9 +23,9 @@ public class YourApplication {
             // Prints out the reviews
             System.out.println(discordBotsListAPI.getReviews("848238190355283988"));
 
-        } catch (IOException ioException) {
-            // Something went wrong!
-            ioException.printStackTrace();
+        } catch (RuntimeException e) {
+            // Something went wrong! OOF!
+            e.printStackTrace();
         }
 
     }
